@@ -1,9 +1,9 @@
 FROM python:3.12-alpine
 
 RUN apk update && apk upgrade
-RUN apk add git openssh make g++
+RUN apk add git openssh make g++ curl
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 WORKDIR /workspaces/adventofcode-2024
 
