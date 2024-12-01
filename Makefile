@@ -1,10 +1,10 @@
-01.run: 01.cpp
-	g++ $< -o $@
+01-cpp.run: src/01.cpp
+	g++ $< -o bin/$@
 
-01.rust.run: 01.rs
-	rustc $< -o $@
+01-rs.run: src/01.rs
+	rustc $< -o bin/$@
 
-all: 01.run 01.rust.run
+all: 01-cpp.run 01-rs.run
 
 # Clean rule to remove the executable
 clean:

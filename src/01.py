@@ -39,7 +39,7 @@ def calculate_similarity_score(left_numbers, right_numbers):
 
 def main():
     # Assuming the input file is named '01.txt'
-    filename = '01.txt'
+    filename = './data/01.txt'
     left_numbers, right_numbers = parse_input(filename)
 
     total_distance = calculate_total_distance(left_numbers, right_numbers)

@@ -3,7 +3,7 @@ use std::fs;
 
 fn main() -> std::io::Result<()> {
     // Read the content of the file
-    let contents = fs::read_to_string("01.txt")?;
+    let contents = fs::read_to_string("./data/01.txt")?;
     
     // Split the input into lines and parse into vectors
     let mut left_list: Vec<i32> = Vec::new();
