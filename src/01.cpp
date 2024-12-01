@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 int main() {
-    std::ifstream file("01.txt");
+    std::ifstream file("./data/01.txt");
     if (!file.is_open()) {
         std::cerr << "Failed to open the file." << std::endl;
         return 1;
