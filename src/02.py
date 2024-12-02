@@ -2,33 +2,24 @@ def is_safe(report):
     if len(report) < 2:
         return True
 
-    # Determine if the report is increasing or decreasing
-    increasing = decreasing = None
-
+    direction = None
     for i in range(1, len(report)):
         diff = report[i] - report[i - 1]
         
-        # Check if the difference is within the allowed range (1 to 3)
-        if abs(diff) < 1 or abs(diff) > 3:
+        if not (1 <= abs(diff) <= 3):
             return False
         
-        # Determine the direction of change
-        if increasing is None and decreasing is None:
-            if diff > 0:
-                increasing = True
-            elif diff < 0:
-                decreasing = True
-        else:
-            if (increasing and diff <= 0) or (decreasing and diff >= 0):
-                return False
+        current_direction = diff > 0
+        if direction is None:
+            direction = current_direction
+        elif direction != current_direction:
+            return False
 
     return True
 
 def is_safe_with_dampener(report):
-    # Try removing each level one by one and check if the remaining levels are safe
     for i in range(len(report)):
-        modified_report = report[:i] + report[i+1:]
-        if is_safe(modified_report):
+        if is_safe(report[:i] + report[i+1:]):
             return True
     return False
 
