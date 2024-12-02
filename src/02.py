@@ -24,18 +24,6 @@ def is_safe(report):
 
     return True
 
-def count_safe_reports(file_path):
-    safe_count = 0
-    
-    with open(file_path, 'r') as file:
-        for line in file:
-            levels = list(map(int, line.strip().split()))
-            if is_safe(levels):
-                safe_count += 1
-    
-    return safe_count
-
-
 def is_safe_with_dampener(report):
     # Try removing each level one by one and check if the remaining levels are safe
     for i in range(len(report)):
@@ -44,20 +32,21 @@ def is_safe_with_dampener(report):
             return True
     return False
 
-def count_safe_reports_with_dampener(file_path):
+def count_safe_reports(file_path):
     safe_count = 0
+    safe_with_dampener_count = 0
     
     with open(file_path, 'r') as file:
         for line in file:
             levels = list(map(int, line.strip().split()))
-            if is_safe(levels) or is_safe_with_dampener(levels):
+            if is_safe(levels):
                 safe_count += 1
+            if is_safe(levels) or is_safe_with_dampener(levels):
+                safe_with_dampener_count += 1
     
-    return safe_count
+    return safe_count, safe_with_dampener_count
 
 # Assuming the input is stored in a file named "02.txt"
-safe_reports = count_safe_reports('./data/02.txt')
+safe_reports, safe_reports_with_dampener = count_safe_reports('./data/02.txt')
 print(f"Number of safe reports: {safe_reports}")
-
-safe_reports = count_safe_reports_with_dampener('./data/02.txt')
-print(f"Number of safe reports with dampener: {safe_reports}")
+print(f"Number of safe reports with dampener: {safe_reports_with_dampener}")
