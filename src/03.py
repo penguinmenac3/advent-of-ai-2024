@@ -1,9 +1,10 @@
 import re
+import sys
 
-def extract_and_sum_multiplications(file_path):
+
+def extract_and_sum_multiplications():
     # Read the content of the file
-    with open(file_path, 'r') as file:
-        content = file.read()
+    content = sys.stdin.read()
 
     # Regular expression pattern for valid mul(X,Y) instructions and do()/don't() instructions
     pattern = r'mul\((\d+),(\d+)\)|do\(\)|don\'t\(\)'
@@ -33,11 +34,8 @@ def extract_and_sum_multiplications(file_path):
 
     return total_sum_unconditional, total_sum_conditional
 
-# Path to the data file
-file_path = './data/03.txt'
-
 # Calculate the sum of all multiplication results and conditional sums
-unconditional_result, conditional_result = extract_and_sum_multiplications(file_path)
+unconditional_result, conditional_result = extract_and_sum_multiplications()
 
 # Print the result
 print(f"The sum of all multiplication results is: {unconditional_result}")

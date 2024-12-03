@@ -1,9 +1,9 @@
+import sys
 from collections import Counter
 
-def parse_input(filename):
-    # Read the input from the file
-    with open(filename, 'r') as file:
-        lines = file.readlines()
+def parse_input():
+    # Read the input from the stdinput
+    lines = sys.stdin.readlines()
 
     # Initialize two lists for left and right numbers
     left_numbers = []
@@ -38,9 +38,7 @@ def calculate_similarity_score(left_numbers, right_numbers):
     return total_similarity_score
 
 def main():
-    # Assuming the input file is named '01.txt'
-    filename = './data/01.txt'
-    left_numbers, right_numbers = parse_input(filename)
+    left_numbers, right_numbers = parse_input()
 
     total_distance = calculate_total_distance(left_numbers, right_numbers)
     print(f"The total distance between the lists is: {total_distance}")
