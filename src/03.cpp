@@ -1,59 +1,66 @@
 #include <iostream>
 #include <string>
-#include <regex>
+#include <cctype>
 
-std::pair<int, int> extract_and_sum_multiplications(std::istream& input) {
-    // Read the content from the stream
-    std::string content((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+int main() {
+    std::string input;
+    
+    int result = 0;
+    int resultAll = 0;
+    bool mul_enabled = true; // Initially, all mul instructions are enabled
 
-    // Regular expression pattern for valid mul(X,Y) instructions and do()/don't() instructions
-    std::regex pattern(R"(mul\((\d+),(\d+)\)|do\(\)|don\'t\(\))");
+    while (std::getline(std::cin, input)) {
+        size_t i = 0;
+        while (i < input.length()) {
+            if (input.substr(i, 3) == "do(") {
+                // Enable multiplication
+                mul_enabled = true;
+                i += 2; // Move index past 'do('
+            } else if (input.substr(i, 7) == "don't()") {
+                // Disable multiplication
+                mul_enabled = false;
+                i += 6; // Move index past 'don't()'
+            } else if (input.substr(i, 3) == "mul") {
+                // Check if 'mul' is followed by '('
+                size_t j = i + 3;
+                if (j < input.length() && input[j] == '(') {
+                    ++j; // Skip '('
 
-    // Find all matches in the content
-    auto words_begin = std::sregex_iterator(content.begin(), content.end(), pattern);
-    auto words_end = std::sregex_iterator();
+                    // Find the first number
+                    int num1 = 0;
+                    while (j < input.length() && std::isdigit(input[j])) {
+                        num1 = num1 * 10 + (input[j] - '0');
+                        ++j;
+                    }
 
-    // Initialize the sum of results for both cases
-    int total_sum_unconditional = 0;
-    int total_sum_conditional = 0;
+                    // Check for comma
+                    if (j < input.length() && input[j] == ',') {
+                        ++j; // Skip ','
 
-    // Flag to track if mul instructions are enabled
-    bool is_enabled = true;
+                        // Find the second number
+                        int num2 = 0;
+                        while (j < input.length() && std::isdigit(input[j])) {
+                            num2 = num2 * 10 + (input[j] - '0');
+                            ++j;
+                        }
 
-    // Process matches
-    for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
-        std::smatch match = *i;
-        std::string match_str = content.substr(match.position(), match.length());
-
-        if (match_str == "do()") {
-            is_enabled = true;
-        } else if (match_str == "don't()") {
-            is_enabled = false;
-        } else {
-            // Extract numbers from the match
-            int x, y;
-            std::sscanf(match_str.c_str(), "mul(%d,%d)", &x, &y);
-            total_sum_unconditional += x * y;
-            if (is_enabled) {
-                total_sum_conditional += x * y;
+                        // Check for closing parenthesis
+                        if (j < input.length() && input[j] == ')') {
+                            if (mul_enabled) {
+                                result += num1 * num2;
+                            }
+                            resultAll += num1 * num2;
+                        }
+                    }
+                }
+                i += 3; // Move index past 'mul'
+            } else {
+                ++i; // Move to the next character
             }
         }
     }
 
-    return {total_sum_unconditional, total_sum_conditional};
-}
-
-int main() {
-    try {
-        // Calculate the sum of all multiplication results and conditional sums
-        auto [unconditional_result, conditional_result] = extract_and_sum_multiplications(std::cin);
-
-        // Print the result
-        std::cout << "The sum of all multiplication results is: " << unconditional_result << std::endl;
-        std::cout << "The sum of all enabled multiplication results is: " << conditional_result << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
-
+    std::cout << "The sum of all multiplication results is: " << resultAll << std::endl;
+    std::cout << "The sum of all enabled multiplication results is: " << result << std::endl;
     return 0;
 }
