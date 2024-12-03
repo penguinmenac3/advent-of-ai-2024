@@ -3,6 +3,9 @@
 #include <cctype>
 
 int main() {
+    std::ios::sync_with_stdio(false); // Disable synchronization between C++ and C I/O streams
+    std::cin.tie(nullptr);             // Untie cin from cout to allow asynchronous reading
+
     std::string input;
     
     int result = 0;
@@ -10,52 +13,73 @@ int main() {
     bool mul_enabled = true; // Initially, all mul instructions are enabled
 
     while (std::getline(std::cin, input)) {
-        size_t i = 0;
-        while (i < input.length()) {
-            if (input.substr(i, 3) == "do(") {
-                // Enable multiplication
-                mul_enabled = true;
-                i += 2; // Move index past 'do('
-            } else if (input.substr(i, 7) == "don't()") {
-                // Disable multiplication
-                mul_enabled = false;
-                i += 6; // Move index past 'don't()'
-            } else if (input.substr(i, 3) == "mul") {
+        const char* p = input.c_str();
+        const char* end = p + input.length();
+
+        while (p < end) {
+            if (*p == 'd' && *(p+1) == 'o') {
+                // Enable multiplication or disable multiplication
+                if (*(p+2) == '(' && *(p+3) == ')') {
+                    mul_enabled = true;
+                    p += 4; // Move past "do("
+                } else if (*(p+2) == 'n' && *(p+3) == '\'' && *(p+4) == 't' && *(p+5) == '(' && *(p+6) == ')') {
+                    mul_enabled = false;
+                    p += 7; // Move past "don't()"
+                } else {
+                    p += 2;
+                }
+            } else if (*p == 'm' && *(p+1) == 'u' && *(p+2) == 'l') {
                 // Check if 'mul' is followed by '('
-                size_t j = i + 3;
-                if (j < input.length() && input[j] == '(') {
-                    ++j; // Skip '('
+                p += 3; // Move past "mul"
+                if (p < end && *p == '(') {
+                    ++p; // Skip '('
 
                     // Find the first number
                     int num1 = 0;
-                    while (j < input.length() && std::isdigit(input[j])) {
-                        num1 = num1 * 10 + (input[j] - '0');
-                        ++j;
+                    while (p < end && std::isdigit(*p)) {
+                        num1 = num1 * 10 + (*p - '0');
+                        ++p;
                     }
 
                     // Check for comma
-                    if (j < input.length() && input[j] == ',') {
-                        ++j; // Skip ','
+                    if (p < end && *p == ',') {
+                        ++p; // Skip ','
 
                         // Find the second number
                         int num2 = 0;
-                        while (j < input.length() && std::isdigit(input[j])) {
-                            num2 = num2 * 10 + (input[j] - '0');
-                            ++j;
+                        while (p < end && std::isdigit(*p)) {
+                            num2 = num2 * 10 + (*p - '0');
+                            ++p;
                         }
 
                         // Check for closing parenthesis
-                        if (j < input.length() && input[j] == ')') {
+                        if (p < end && *p == ')') {
+                            int product = num1 * num2;
+                            resultAll += product;
                             if (mul_enabled) {
-                                result += num1 * num2;
+                                result += product;
                             }
-                            resultAll += num1 * num2;
+                            ++p; // Skip ')'
+                        } else {
+                            // Malformed input, skip to the next potential 'm', 'd', or end of line
+                            while (p < end && *p != 'm' && *p != 'd') {
+                                ++p;
+                            }
+                        }
+                    } else {
+                        // Malformed input, skip to the next potential 'm', 'd', or end of line
+                        while (p < end && *p != 'm' && *p != 'd') {
+                            ++p;
                         }
                     }
+                } else {
+                    // Malformed input, skip to the next potential 'm', 'd', or end of line
+                    while (p < end && *p != 'm' && *p != 'd') {
+                        ++p;
+                    }
                 }
-                i += 3; // Move index past 'mul'
             } else {
-                ++i; // Move to the next character
+                ++p;
             }
         }
     }
