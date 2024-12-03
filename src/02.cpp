@@ -30,8 +30,12 @@ bool is_safe(const std::vector<int>& report) {
 
 bool is_safe_with_dampener(const std::vector<int>& report) {
     for (size_t i = 0; i < report.size(); ++i) {
-        std::vector<int> modified_report(report); // Copy the original vector
-        modified_report.erase(modified_report.begin() + i);
+        // Create a view without the element at index i
+        auto modified_report = std::vector<int>(report.begin(), report.begin() + i);
+        if (i + 1 < report.size()) {
+            modified_report.insert(modified_report.end(), report.begin() + i + 1, report.end());
+        }
+        
         if (is_safe(modified_report)) {
             return true;
         }
@@ -66,6 +70,10 @@ std::pair<int, int> count_safe_reports(std::istream& input) {
 
 int main() {
     try {
+        // Enable buffered I/O for faster processing
+        std::ios_base::sync_with_stdio(false);
+        std::cin.tie(nullptr);
+
         auto [safe_count, safe_with_dampener_count] = count_safe_reports(std::cin);
         std::cout << "Safe reports: " << safe_count << std::endl;
         std::cout << "Safe reports with dampener: " << safe_with_dampener_count << std::endl;

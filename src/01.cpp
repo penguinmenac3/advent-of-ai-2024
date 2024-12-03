@@ -5,6 +5,9 @@
 #include <unordered_map>
 
 int main() {
+    std::ios::sync_with_stdio(false); // Disable synchronization between C++ and C I/O streams
+    std::cin.tie(nullptr);             // Untie cin from cout to allow asynchronous reading
+
     std::string line;
     std::vector<int> leftList, rightList;
     std::unordered_map<int, int> frequencyMap;
@@ -33,7 +36,9 @@ int main() {
     // Calculate the similarity score
     long long similarityScore = 0;
     for (int num : leftList) {
-        similarityScore += num * frequencyMap[num];
+        if (frequencyMap.find(num) != frequencyMap.end()) {
+            similarityScore += static_cast<long long>(num) * frequencyMap[num];
+        }
     }
 
     // Output the results
