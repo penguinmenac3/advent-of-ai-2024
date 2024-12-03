@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <sstream>
 #include <algorithm>
 #include <unordered_map>
 
@@ -8,19 +7,15 @@ int main() {
     std::ios::sync_with_stdio(false); // Disable synchronization between C++ and C I/O streams
     std::cin.tie(nullptr);             // Untie cin from cout to allow asynchronous reading
 
-    std::string line;
+    int left, right;
     std::vector<int> leftList, rightList;
     std::unordered_map<int, int> frequencyMap;
 
-    // Read each line and extract pairs of numbers from standard input
-    while (std::getline(std::cin, line)) {
-        std::istringstream iss(line);
-        int left, right;
-        if (iss >> left >> right) {
-            leftList.push_back(left);
-            rightList.push_back(right);
-            frequencyMap[right]++;
-        }
+    // Read each pair of numbers directly into variables
+    while (std::cin >> left >> right) {
+        leftList.push_back(left);
+        rightList.push_back(right);
+        frequencyMap[right]++;
     }
 
     // Sort both lists for total distance calculation
@@ -29,7 +24,8 @@ int main() {
 
     // Calculate the total distance
     int totalDistance = 0;
-    for (size_t i = 0; i < leftList.size(); ++i) {
+    size_t size = leftList.size();
+    for (size_t i = 0; i < size; ++i) {
         totalDistance += abs(leftList[i] - rightList[i]);
     }
 
