@@ -10,7 +10,10 @@
 02-rs.run: src/02.rs
 	rustc $< -o bin/$@
 
-all: 01-cpp.run 01-rs.run 02-cpp.run 02-rs.run
+03-cpp.run: src/03.cpp
+	g++ $< -o bin/$@
+
+all: 01-cpp.run 01-rs.run 02-cpp.run 02-rs.run 03-cpp.run
 
 # Clean rule to remove the executable
 clean:
