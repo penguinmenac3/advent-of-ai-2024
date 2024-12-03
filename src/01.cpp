@@ -1,23 +1,16 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <sstream>
 #include <algorithm>
 #include <unordered_map>
 
 int main() {
-    std::ifstream file("./data/01.txt");
-    if (!file.is_open()) {
-        std::cerr << "Failed to open the file." << std::endl;
-        return 1;
-    }
-
     std::string line;
     std::vector<int> leftList, rightList;
     std::unordered_map<int, int> frequencyMap;
 
-    // Read each line and extract pairs of numbers
-    while (std::getline(file, line)) {
+    // Read each line and extract pairs of numbers from standard input
+    while (std::getline(std::cin, line)) {
         std::istringstream iss(line);
         int left, right;
         if (iss >> left >> right) {
