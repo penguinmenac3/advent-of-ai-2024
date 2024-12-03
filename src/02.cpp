@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <sstream>
 #include <vector>
 #include <optional>
@@ -40,17 +39,12 @@ bool is_safe_with_dampener(const std::vector<int>& report) {
     return false;
 }
 
-std::pair<int, int> count_safe_reports(const std::string& file_path) {
+std::pair<int, int> count_safe_reports(std::istream& input) {
     int safe_count = 0;
     int safe_with_dampener_count = 0;
     
-    std::ifstream file(file_path);
-    if (!file.is_open()) {
-        throw std::runtime_error("Could not open file");
-    }
-    
     std::string line;
-    while (std::getline(file, line)) {
+    while (std::getline(input, line)) {
         std::istringstream iss(line);
         int number;
         std::vector<int> levels;
@@ -67,14 +61,12 @@ std::pair<int, int> count_safe_reports(const std::string& file_path) {
         }
     }
     
-    file.close();
     return {safe_count, safe_with_dampener_count};
 }
 
 int main() {
     try {
-        std::string file_path = "./data/02.txt"; // Replace with your input file path
-        auto [safe_count, safe_with_dampener_count] = count_safe_reports(file_path);
+        auto [safe_count, safe_with_dampener_count] = count_safe_reports(std::cin);
         std::cout << "Safe reports: " << safe_count << std::endl;
         std::cout << "Safe reports with dampener: " << safe_with_dampener_count << std::endl;
     } catch (const std::exception& e) {

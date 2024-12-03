@@ -1,16 +1,10 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <regex>
 
-std::pair<int, int> extract_and_sum_multiplications(const std::string& file_path) {
-    // Read the content of the file
-    std::ifstream file(file_path);
-    if (!file.is_open()) {
-        throw std::runtime_error("Failed to open file: " + file_path);
-    }
-
-    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+std::pair<int, int> extract_and_sum_multiplications(std::istream& input) {
+    // Read the content from the stream
+    std::string content((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
 
     // Regular expression pattern for valid mul(X,Y) instructions and do()/don't() instructions
     std::regex pattern(R"(mul\((\d+),(\d+)\)|do\(\)|don\'t\(\))");
@@ -50,12 +44,9 @@ std::pair<int, int> extract_and_sum_multiplications(const std::string& file_path
 }
 
 int main() {
-    // Path to the data file
-    std::string file_path = "./data/03.txt";
-
     try {
         // Calculate the sum of all multiplication results and conditional sums
-        auto [unconditional_result, conditional_result] = extract_and_sum_multiplications(file_path);
+        auto [unconditional_result, conditional_result] = extract_and_sum_multiplications(std::cin);
 
         // Print the result
         std::cout << "The sum of all multiplication results is: " << unconditional_result << std::endl;

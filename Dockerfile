@@ -1,7 +1,7 @@
-FROM python:3.12-alpine
+FROM python:3.12-bookworm
 
-RUN apk update && apk upgrade
-RUN apk add git openssh make g++ curl
+RUN apt update && apt upgrade
+RUN apt install -y git openssh-client g++ curl build-essential
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 

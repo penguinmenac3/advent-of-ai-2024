@@ -1,6 +1,7 @@
 import os
 import sys
 
+USER_TOKEN = "c7328e8d-b1be-11ef-9f73-5a22572bfb24"
 
 BINARY_TYPES = [
     "cpp",
@@ -18,11 +19,11 @@ def test_day(day):
     fname = f"src/{day:02d}"
     if os.path.exists(fname + ".py"):
         print(f"\nRunning: {fname}.py")
-        os.system(f"python {fname}.py")
+        os.system(f"python {fname}.py < ./data/{day:02d}.txt")
     for lang in BINARY_TYPES:
         if os.path.exists(f"bin/{day:02d}-{lang}.run"):
             print(f"\nRunning: src/{day:02d}.{lang}")
-            os.system(f"bin/{day:02d}-{lang}.run")
+            os.system(f"bin/{day:02d}-{lang}.run < ./data/{day:02d}.txt")
 
 
 if __name__ == "__main__":
