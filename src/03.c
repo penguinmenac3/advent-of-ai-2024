@@ -22,7 +22,7 @@ int main() {
                     mul_enabled = 1;
                     p += 4; // Move past "do("
                 } else if (*(p+2) == 'n' && *(p+3) == '\'' && *(p+4) == 't' && *(p+5) == '(' && *(p+6) == ')') {
-                    mul_enabled = 0;
+                       mul_enabled = 0;
                     p += 7; // Move past "don't()"
                 } else {
                     p += 2;
