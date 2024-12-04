@@ -97,6 +97,9 @@ int count_xmas_shapes(const vector<vector<char>>& grid) {
 }
 
 int main() {
+    std::ios::sync_with_stdio(false); // Disable synchronization between C++ and C I/O streams
+    std::cin.tie(nullptr);             // Untie cin from cout to allow asynchronous reading
+
     vector<vector<char>> grid; // Declare the grid variable
     string input;
 
