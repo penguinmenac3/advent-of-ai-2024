@@ -29,42 +29,28 @@ def count_word(grid, word):
     return count
 
 
-def rotate_kernel(kernel):
-    return [list(row[::-1]) for row in zip(*kernel)]
-
-def reflect_kernel(kernel):
-    return [row[::-1] for row in kernel]
-
-def generate_kernels():
-    # Original X-MAS shape
-    original_kernel = [
-        ['M', '.', 'S'],
-        ['.', 'A', '.'],
-        ['M', '.', 'S']
-    ]
-    
-    kernels = {tuple(map(tuple, original_kernel))}
-    
-    # Generate all 8 possible rotations (4 rotations + 4 reflections)
-    for _ in range(3):
-        original_kernel = rotate_kernel(original_kernel)
-        kernels.add(tuple(map(tuple, original_kernel)))
-    
-    original_kernel_reflected = reflect_kernel(original_kernel)
-    kernels.add(tuple(map(tuple, original_kernel_reflected)))
-    
-    for _ in range(3):
-        original_kernel_reflected = rotate_kernel(original_kernel_reflected)
-        kernels.add(tuple(map(tuple, original_kernel_reflected)))
-    
-    return [list(list(row) for row in kernel) for kernel in kernels]
-
 def count_xmas_shapes(grid):
     rows, cols = len(grid), len(grid[0])
     count = 0
     
     # Generate all possible orientations of the X-MAS kernel
-    kernels = generate_kernels()
+    kernels = [
+        [['S', '.', 'M'],
+        ['.', 'A', '.'],
+        ['S', '.', 'M']],
+
+        [['M', '.', 'M'],
+        ['.', 'A', '.'],
+        ['S', '.', 'S']],
+
+        [['M', '.', 'S'],
+        ['.', 'A', '.'],
+        ['M', '.', 'S']],
+
+        [['S', '.', 'S'],
+        ['.', 'A', '.'],
+        ['M', '.', 'M']],
+    ]
     
     # Slide the kernel over the grid
     for i in range(rows - 2):
