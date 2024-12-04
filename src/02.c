@@ -79,13 +79,16 @@ int is_safe_with_dampener(const Vector* report) {
 void count_safe_reports(FILE* input, int* safe_count, int* safe_with_dampener_count) {
     *safe_count = 0;
     *safe_with_dampener_count = 0;
-    
-    char line[256];
-    while (fgets(line, sizeof(line), input)) {
+
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    while ((read = getline(&line, &len, input)) != -1) {
         Vector levels;
         vector_init(&levels);
         
-        char* token = strtok(line, " \t\n");
+        char *token = strtok(line, " \t\n");
         while (token) {
             int number = atoi(token);
             vector_push_back(&levels, number);
@@ -101,6 +104,9 @@ void count_safe_reports(FILE* input, int* safe_count, int* safe_with_dampener_co
         
         vector_free(&levels);
     }
+
+    // Free the memory allocated by getline
+    free(line);
 }
 
 int main() {
