@@ -25,7 +25,9 @@ def run_binary(binary, day, debug):
 
 def measure_compilation_time(lang, src, binary):
     start_time = time.perf_counter_ns()
-    if lang == "cpp":
+    if lang == "c":
+        os.system(f"gcc {src} -march=x86-64 -Ofast -o {binary}")
+    elif lang == "cpp":
         os.system(f"g++ {src} -march=x86-64 -Ofast -o {binary}")
     elif lang == "rs":
         os.system(f"rustc {src} -o {binary}")
