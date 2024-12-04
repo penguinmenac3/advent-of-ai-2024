@@ -9,22 +9,24 @@ def count_word(grid, word):
         return True
 
     count = 0
+    first_letter = word[0]
+    directions = [
+        (1, 0),   # right
+        (-1, 0),  # left
+        (0, 1),   # down
+        (0, -1),  # up
+        (1, 1),   # diagonal down-right
+        (-1, -1), # diagonal up-left
+        (1, -1),  # diagonal down-left
+        (-1, 1)   # diagonal up-right
+    ]
+
     for x in range(len(grid)):
         for y in range(len(grid[0])):
-            # Check all possible directions: horizontal, vertical, and both diagonals
-            directions = [
-                (1, 0),   # right
-                (-1, 0),  # left
-                (0, 1),   # down
-                (0, -1),  # up
-                (1, 1),   # diagonal down-right
-                (-1, -1), # diagonal up-left
-                (1, -1),  # diagonal down-left
-                (-1, 1)   # diagonal up-right
-            ]
-            for dx, dy in directions:
-                if search(word, x, y, dx, dy):
-                    count += 1
+            if grid[x][y] == first_letter:
+                for dx, dy in directions:
+                    if search(word, x, y, dx, dy):
+                        count += 1
 
     return count
 
@@ -36,39 +38,35 @@ def count_xmas_shapes(grid):
     # Generate all possible orientations of the X-MAS kernel
     kernels = [
         [['S', '.', 'M'],
-        ['.', 'A', '.'],
-        ['S', '.', 'M']],
-
+         ['.', 'A', '.'],
+         ['S', '.', 'M']],
+        
         [['M', '.', 'M'],
-        ['.', 'A', '.'],
-        ['S', '.', 'S']],
-
+         ['.', 'A', '.'],
+         ['S', '.', 'S']],
+        
         [['M', '.', 'S'],
-        ['.', 'A', '.'],
-        ['M', '.', 'S']],
-
+         ['.', 'A', '.'],
+         ['M', '.', 'S']],
+        
         [['S', '.', 'S'],
-        ['.', 'A', '.'],
-        ['M', '.', 'M']],
+         ['.', 'A', '.'],
+         ['M', '.', 'M']],
     ]
     
     # Slide the kernel over the grid
     for i in range(rows - 2):
-        for j in range(cols - 2):
-            
+        for j in range(cols - 2):  # Adjusted to cols - 3 to prevent out-of-bounds errors
             for kernel in kernels:
-                valid = True
-                for x in range(3):
-                    for y in range(3):
-                        if kernel[x][y] == '.':
-                            continue
-                        elif grid[i+x][j+y] != kernel[x][y]:
-                            valid = False
+                match = True
+                for ki in range(3):
+                    for kj in range(3):
+                        if not (kernel[ki][kj] == '.' or grid[i + ki][j + kj] == kernel[ki][kj]):
+                            match = False
                             break
-                    if not valid:
+                    if not match:
                         break
-                
-                if valid:
+                if match:
                     count += 1
     
     return count
