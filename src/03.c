@@ -1,17 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 
 int main() {
-    char input[2048]; // Assuming a reasonable buffer size for input
     int result = 0;
     int resultAll = 0;
     int mul_enabled = 1; // Initially, all mul instructions are enabled
 
-    while (fgets(input, sizeof(input), stdin) != NULL) {
+    char* input = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    while ((read = getline(&input, &len, stdin)) != -1) {
         const char* p = input;
-        const char* end = input + strlen(input);
+        const char* end = input + read - 1; // Exclude the newline character
 
         while (p < end) {
             if (*p == 'd' && *(p+1) == 'o') {
@@ -80,6 +82,8 @@ int main() {
             }
         }
     }
+
+    free(input); // Free dynamically allocated memory
 
     printf("The sum of all multiplication results is: %d\n", resultAll);
     printf("The sum of all enabled multiplication results is: %d\n", result);
