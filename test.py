@@ -37,7 +37,7 @@ def measure_compilation_time(lang, src, binary):
     elif lang == "cpp":
         os.system(f"g++ {src} -march=x86-64 -Ofast -o {binary}")
     elif lang == "rs":
-        os.system(f"rustc {src} -o {binary}")
+        os.system(f"rustc {src} --target x86_64-unknown-linux-gnu -C opt-level=3 -o {binary}")
     end_time = time.perf_counter_ns()
     return (end_time - start_time) / 1e6
 
