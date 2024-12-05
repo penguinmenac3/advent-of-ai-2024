@@ -1,7 +1,6 @@
 import sys
 
 def read_input():
-    import sys
     rules = []
     updates = []
 
@@ -31,16 +30,49 @@ def is_correct_order(update, rules):
                 return False
     return True
 
+def topological_sort(rules, pages):
+    from collections import defaultdict, deque
+    
+    # Create a graph
+    graph = defaultdict(list)
+    indegree = defaultdict(int)
+    
+    for x, y in rules:
+        if x in pages and y in pages:
+            graph[x].append(y)
+            indegree[y] += 1
+
+    # Find nodes with no incoming edges
+    queue = deque([page for page in pages if indegree[page] == 0])
+    sorted_order = []
+
+    while queue:
+        node = queue.popleft()
+        sorted_order.append(node)
+        
+        for neighbor in graph[node]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
+
+    return sorted_order
+
 def main():
     rules, updates = read_input()
-    total_middle_sum = 0
+    total_middle_sum_correct = 0
+    total_middle_sum_incorrect = 0
     
     for update in updates:
         if is_correct_order(update, rules):
             middle_page = update[len(update) // 2]
-            total_middle_sum += middle_page
+            total_middle_sum_correct += middle_page
+        else:
+            sorted_update = topological_sort(rules, update)
+            middle_page = sorted_update[len(sorted_update) // 2]
+            total_middle_sum_incorrect += middle_page
 
-    print(total_middle_sum)
+    print(total_middle_sum_correct)
+    print(total_middle_sum_incorrect)
 
 if __name__ == "__main__":
     main()
