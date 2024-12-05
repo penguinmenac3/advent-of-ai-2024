@@ -5,6 +5,8 @@ import time
 
 USER_TOKEN = "c7328e8d-b1be-11ef-9f73-5a22572bfb24"
 
+N = 10;
+N_warmup = 5;
 
 def test_all():
     for day in range(1, 25):
@@ -17,10 +19,15 @@ def run_binary(binary, day, debug):
     infile = f"./data/{day:02d}.txt"
     if debug:
         infile = f"./data/{day:02d}_example.txt"
-    start_time = time.perf_counter_ns()
+        
     os.system(f"{binary} < {infile}")
+    for _ in range(N_warmup-1):
+        os.system(f"{binary} < {infile} > /dev/null")
+    start_time = time.perf_counter_ns()
+    for _ in range(N):
+        os.system(f"{binary} < {infile} > /dev/null")
     end_time = time.perf_counter_ns()
-    return (end_time - start_time) / 1e6
+    return (end_time - start_time) / 1e6 / N_warmup
 
 
 def measure_compilation_time(lang, src, binary):
