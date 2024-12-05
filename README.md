@@ -15,3 +15,14 @@ The human can guide the AI like a superviser and fix some syntax errors (if nesc
 * Run/Benchmark code for a day:
     * Option A: Run using the native runner `./test.run 01`
     * Option B: Run using the python runner `python test.py 01`
+
+## Development using AI
+
+1. Install Ollama locally
+2. Install models for ollama
+    * `ollama pull qwen2.5-code:14b`  (Used to answer questions)
+    * `ollama pull nomic-embed-text`  (Needed for RaG on codebase)
+3. Install `Continue - Codestral, Claude, and more` extension
+    * disable Tab Autocomplete and Telemetry in settings
+    * configure it to be on right panel
+    * confiure the extension to use ollama and autodetect models
