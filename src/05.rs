@@ -30,9 +30,7 @@ fn read_input() -> (Vec<(i32, i32)>, Vec<Vec<i32>>) {
     (rules, updates)
 }
 
-fn is_correct_order(update: &[i32], rules: &[(i32, i32)]) -> bool {
-    let page_index_map: HashMap<i32, usize> = update.iter().enumerate().map(|(idx, &page)| (page, idx)).collect();
-
+fn is_correct_order(rules: &[(i32, i32)], page_index_map: &HashMap<i32, usize>) -> bool {
     for &(x, y) in rules {
         if let (Some(&index_x), Some(&index_y)) = (page_index_map.get(&x), page_index_map.get(&y)) {
             if index_x >= index_y {
@@ -63,7 +61,7 @@ fn topological_sort(rules: &[(i32, i32)], pages: &[i32]) -> Vec<i32> {
         }
     }
 
-    let mut sorted_order = vec![];
+    let mut sorted_order = Vec::with_capacity(pages.len());
 
     while let Some(node) = queue.pop_front() {
         sorted_order.push(node);
@@ -86,12 +84,14 @@ fn main() {
     let mut total_middle_sum_correct = 0;
     let mut total_middle_sum_incorrect = 0;
 
-    for update in updates {
-        if is_correct_order(&update, &rules) {
+    for update in &updates {
+        let page_index_map: HashMap<i32, usize> = update.iter().enumerate().map(|(idx, &page)| (page, idx)).collect();
+
+        if is_correct_order(&rules, &page_index_map) {
             let middle_page = update[update.len() / 2];
             total_middle_sum_correct += middle_page;
         } else {
-            let sorted_update = topological_sort(&rules, &update);
+            let sorted_update = topological_sort(&rules, update);
             let middle_page = sorted_update[sorted_update.len() / 2];
             total_middle_sum_incorrect += middle_page;
         }
