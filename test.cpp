@@ -23,11 +23,11 @@ double run_binary(std::string& binary, const std::string& day, bool debug) {
 
     std::system((binary + " < " + infile).c_str());
     for (int i = 0; i < N_warmup; ++i) {
-        std::system((binary + " < " + infile + " > /dev/null").c_str());
+        std::system((binary + " < " + infile + " 1> /dev/null 2>& 1").c_str());
     }
     auto start_time = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < N; ++i) {
-        std::system((binary + " < " + infile + " > /dev/null").c_str());
+        std::system((binary + " < " + infile + " 1> /dev/null 2>& 1").c_str());
     }
     auto end_time = std::chrono::high_resolution_clock::now();
 
