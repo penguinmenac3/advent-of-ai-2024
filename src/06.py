@@ -1,29 +1,31 @@
 import sys
 from tqdm import tqdm
 
-def get_neighbors(x, y):
-    # Directions: up, right, down, left
-    return [(x-1, y), (x, y+1), (x+1, y), (x, y-1)]
-
-def turn_right(direction):
-    # Directions are represented as indices in the neighbors list
-    return (direction + 1) % 4
-
 def simulate_guard(map_data, start_pos, obstacle_x, obstacle_y):
     rows = len(map_data)
     cols = len(map_data[0])
     x, y, direction = start_pos
     visited = {(x, y): [direction]}
+    
     while True:
-        nx, ny = get_neighbors(x, y)[direction]
+        # Directions: up, right, down, left
+        if direction == 0:
+            nx, ny = x - 1, y
+        elif direction == 1:
+            nx, ny = x, y + 1
+        elif direction == 2:
+            nx, ny = x + 1, y
+        elif direction == 3:
+            nx, ny = x, y - 1
+        
         if not (0 <= nx < rows and 0 <= ny < cols):
             # Out of bounds, stop simulation
             break
         if map_data[nx][ny] == '#' or (nx, ny) == (obstacle_x, obstacle_y):
-            # Turn right if there's an obstacle in front
-            direction = turn_right(direction)
+            # Turn right: increment direction by 1 and take modulo 4
+            direction = (direction + 1) % 4
         else:
-            # Move forward if no obstacle
+            # Move forward
             x, y = nx, ny
         if (x, y) in visited and direction in visited[(x, y)]:
             # Loop detected, stop simulation
@@ -31,6 +33,7 @@ def simulate_guard(map_data, start_pos, obstacle_x, obstacle_y):
         if (x, y) not in visited:
             visited[(x, y)] = []
         visited[(x, y)].append(direction)
+    
     return False, visited
 
 def main():
