@@ -18,6 +18,7 @@
 				"donjayamanne.githistory",
 				"ms-python.python",
 				"ms-vscode.cpptools-extension-pack",
+				"golang.go",
 				"commitollama.commitollama",
 			]
 		}

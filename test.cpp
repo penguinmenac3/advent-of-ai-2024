@@ -46,6 +46,8 @@ double measure_compilation_time(const std::string& lang, const std::string& src,
         std::system(("g++ " + src + " -march=x86-64 -Ofast -o " + binary).c_str());
     } else if (lang == "rs") {
         std::system(("rustc " + src + " --target x86_64-unknown-linux-gnu -C opt-level=3 -o " + binary).c_str());
+    } else if (lang == "go") {
+        std::system(("go build -o " + binary + " -ldflags='-s -w' " + src).c_str());
     }
     auto end_time = std::chrono::high_resolution_clock::now();
 
