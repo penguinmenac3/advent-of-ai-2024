@@ -13,6 +13,10 @@ int N = 10;
 int N_warmup = 5;
 
 double run_binary(std::string& binary, const std::string& day, bool debug) {
+    if (day == "06") {
+        N = 1;
+        N_warmup = 0;
+    }
     std::string infile = "./data/" + day + ".txt";
     if (debug) {
         infile = "./data/" + day + "_example.txt";
