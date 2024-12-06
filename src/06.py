@@ -1,13 +1,18 @@
 import sys
 from tqdm import tqdm
 
+
 def simulate_guard(map_data, start_pos, obstacle_x, obstacle_y):
     rows = len(map_data)
     cols = len(map_data[0])
     x, y, direction = start_pos
-    visited = {(x, y): [direction]}
     
-    while True:
+    # Create a flattened index for the visited map
+    flat_visited_size = rows * cols
+    visited = [None] * flat_visited_size
+    visited[x * cols + y] = [direction]
+    
+    while True:        
         # Directions: up, right, down, left
         if direction == 0:
             nx, ny = x - 1, y
@@ -27,17 +32,21 @@ def simulate_guard(map_data, start_pos, obstacle_x, obstacle_y):
         else:
             # Move forward
             x, y = nx, ny
-        if (x, y) in visited and direction in visited[(x, y)]:
+        
+        flat_index_new = x * cols + y
+        
+        if visited[flat_index_new] is not None and direction in visited[flat_index_new]:
             # Loop detected, stop simulation
             return True, visited
-        if (x, y) not in visited:
-            visited[(x, y)] = []
-        visited[(x, y)].append(direction)
+        else:
+            if visited[flat_index_new] is None:
+                visited[flat_index_new] = []
+            visited[flat_index_new].append(direction)
     
     return False, visited
 
+
 def main():
-    import sys
     input_data = sys.stdin.read().strip()
     map_data = input_data.split('\n')
     
@@ -56,17 +65,29 @@ def main():
         return
     
     # Find all reachable positions
-    _, reachable_positions = simulate_guard(map_data, start_pos, -1, -1)
+    _, visited_positions = simulate_guard(map_data, start_pos, -1, -1)
+    
+    # Extract all unique (x, y) positions that were visited
+    reachable_positions = set()
+    rows = len(map_data)
+    cols = len(map_data[0])
+    
+    for flat_index in range(len(visited_positions)):
+        if visited_positions[flat_index] is not None:
+            x, y = divmod(flat_index, cols)
+            reachable_positions.add((x, y))
+    
     print("Number of reachable positions:", len(reachable_positions))
     
     # Count loop-inducing positions
     loop_count = 0
-    for obstacle_x, obstacle_y in tqdm(reachable_positions.keys(), desc="Placing Obstacles"):
+    for obstacle_x, obstacle_y in tqdm(reachable_positions, desc="Placing Obstacles"):
         is_loop, _ = simulate_guard(map_data, start_pos, obstacle_x, obstacle_y)
         if is_loop:
             loop_count += 1
     
     print("Number of positions where obstacles would create loops:", loop_count)
+
 
 if __name__ == "__main__":
     main()
