@@ -1,82 +1,67 @@
-use std::io::{self, BufRead};
+use std::io::{self, Read};
 
-fn calculate_total_calibration_result(input_lines: Vec<&str>, include_concat: bool) -> i64 {
+fn backtrack(
+    index: usize,
+    current_result: i64,
+    test_value: i64,
+    numbers: &[i64],
+    include_concat: bool,
+) -> bool {
+    if current_result > test_value {
+        return false;
+    }
+
+    if index >= numbers.len() {
+        return current_result == test_value;
+    }
+
+    let matches = backtrack(index + 1, current_result + numbers[index], test_value, numbers, include_concat)
+        || backtrack(index + 1, current_result * numbers[index], test_value, numbers, include_concat);
+
+    if include_concat {
+        let concatenated_result = i64::from_str_radix(&(current_result.to_string() + &numbers[index].to_string()), 10).unwrap();
+        return matches || backtrack(index + 1, concatenated_result, test_value, numbers, include_concat);
+    }
+
+    matches
+}
+
+fn calculate_total_calibration_result(
+    input_lines: Vec<&str>,
+    include_concat: bool,
+) -> i64 {
     let mut total_calibration_result = 0;
 
     for line in input_lines {
-        // Split the line into two parts: test_value and numbers_str
-        let parts: Vec<&str> = line.trim().split(':').collect();
-        
-        if parts.len() != 2 {
-            eprintln!("Invalid line format: {}", line);
-            continue; // Skip invalid lines
-        }
-        
-        let test_value: i64 = parts[0].trim().parse().unwrap_or_else(|e| {
-            eprintln!("Failed to parse test value in line '{}': {}", line, e);
-            0
-        });
-        let numbers_str: Vec<&str> = parts[1].trim().split_whitespace().collect();
+        let parts: Vec<&str> = line.split(": ").collect();
+        let test_value: i64 = parts[0].parse().unwrap();
 
-        let numbers: Result<Vec<i64>, _> = numbers_str.iter()
-            .map(|&s| s.trim().parse::<i64>())
+        // Extract digits from the concatenated numbers string
+        let numbers: Vec<i64> = parts[1].split_whitespace()
+            .map(|digit| digit.parse().unwrap())
             .collect();
-        
-        if let Err(e) = numbers {
-            eprintln!("Failed to parse number in line '{}': {}", line, e);
-            continue;
-        }
-        let numbers = numbers.unwrap();
 
-        let mut operators = vec!['+', '*'];
-        if include_concat {
-            operators.push('|');
-        }
-
-        let num_combinations = operators.len().pow((numbers.len() - 1) as u32);
-
-        for i in 0..num_combinations {
-            let mut result = numbers[0].to_string();
-            let mut combination = Vec::new();
-
-            // Generate the current combination by determining the index of each operator
-            let mut temp = i;
-            for _ in 0..numbers.len() - 1 {
-                combination.push(operators[temp % operators.len()]);
-                temp /= operators.len();
-            }
-
-            for j in 0..combination.len() {
-                match combination[j] {
-                    '+' => result = (result.parse::<i64>().unwrap() + numbers[j + 1]).to_string(),
-                    '*' => result = (result.parse::<i64>().unwrap() * numbers[j + 1]).to_string(),
-                    '|' => result = format!("{}{}", result, numbers[j + 1]),
-                    _ => unreachable!(),
-                }
-            }
-
-            if let Ok(res) = result.parse::<i64>() {
-                if res == test_value {
-                    total_calibration_result += test_value;
-                    break; // No need to check further combinations for this line
-                }
-            } else {
-                eprintln!("Failed to parse result in line '{}': {}", line, result);
-            }
+        // Start backtracking from the second number
+        if backtrack(1, numbers[0], test_value, &numbers, include_concat) {
+            total_calibration_result += test_value;
         }
     }
 
     total_calibration_result
 }
 
-fn main() {
-    let stdin = io::stdin();
-    let input_lines: Vec<String> = stdin.lock().lines().map(|l| l.unwrap()).collect();
+fn main() -> io::Result<()> {
+    let mut input = String::new();
+    io::stdin().read_to_string(&mut input)?;
+
+    let input_lines: Vec<&str> = input.trim().split('\n').collect();
 
     // Calculate results for both parts
-    let part1_result = calculate_total_calibration_result(input_lines.iter().map(|s| s.as_str()).collect(), false);
+    let part1_result = calculate_total_calibration_result(input_lines.clone(), false);
     println!("Part 1 Result: {}", part1_result);
 
-    let part2_result = calculate_total_calibration_result(input_lines.iter().map(|s| s.as_str()).collect(), true);
+    let part2_result = calculate_total_calibration_result(input_lines, true);
     println!("Part 2 Result: {}", part2_result);
+
+    Ok(())
 }
