@@ -19,7 +19,13 @@ fn backtrack(
         || backtrack(index + 1, current_result * numbers[index], test_value, numbers, include_concat);
 
     if include_concat {
-        let concatenated_result = i64::from_str_radix(&(current_result.to_string() + &numbers[index].to_string()), 10).unwrap();
+        let mut mul: i64 = 1;
+        let mut tmp: i64 = numbers[index];
+        while tmp > 0 {
+            tmp /= 10;
+            mul *= 10;
+        }
+        let concatenated_result: i64 = current_result * mul + numbers[index];
         return matches || backtrack(index + 1, concatenated_result, test_value, numbers, include_concat);
     }
 

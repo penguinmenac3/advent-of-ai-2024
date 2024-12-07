@@ -17,7 +17,13 @@ def backtrack(
     matches = backtrack(index + 1, current_result + numbers[index], test_value, numbers, include_concat)
     matches |= backtrack(index + 1, current_result * numbers[index], test_value, numbers, include_concat)
     if include_concat:
-        matches |= backtrack(index + 1, int(str(current_result) + str(numbers[index])), test_value, numbers, include_concat)
+        mul = 1;
+        tmp = numbers[index];
+        while (tmp > 0):
+            tmp //= 10
+            mul *= 10
+        concatenated_result = current_result * mul + numbers[index];
+        matches |= backtrack(index + 1, concatenated_result, test_value, numbers, include_concat)
     
     return matches
 

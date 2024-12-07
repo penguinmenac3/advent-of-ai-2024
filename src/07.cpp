@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-bool backtrack(int index, long long current_result, long long test_value, const std::vector<long long>& numbers, bool include_concat) {
+bool backtrack(int index, long long current_result, long long test_value, std::vector<long long>& numbers, bool include_concat) {
     if (current_result > test_value) {
         return false;
     }
@@ -16,8 +16,13 @@ bool backtrack(int index, long long current_result, long long test_value, const 
         || backtrack(index + 1, current_result * numbers[index], test_value, numbers, include_concat);
 
     if (include_concat) {
-        std::string concatenated_result_str = std::to_string(current_result) + std::to_string(numbers[index]);
-        long long concatenated_result = std::stoll(concatenated_result_str);
+        long long mul = 1;
+        long long tmp = numbers[index];
+        while (tmp > 0) {
+            tmp /= 10;
+            mul *= 10;
+        }
+        long long concatenated_result = current_result * mul + numbers[index];
         return matches || backtrack(index + 1, concatenated_result, test_value, numbers, include_concat);
     }
 
@@ -37,10 +42,9 @@ long long calculate_total_calibration_result(const std::vector<std::string>& inp
         // Extract digits from the concatenated numbers string
         std::vector<long long> numbers;
         std::istringstream number_stream(line.substr(delim_pos + 2));
-        std::string number_str;
+        long long num;
         
-        while (number_stream >> number_str) {
-            long long num = std::stoll(number_str);
+        while (number_stream >> num) {
             numbers.push_back(num);
         }
 
