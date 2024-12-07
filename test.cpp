@@ -13,7 +13,7 @@ int N = 10;
 int N_warmup = 5;
 
 double run_binary(std::string& binary, const std::string& day, bool debug) {
-    if (day == "06") {
+    if (day == "06" || day == "07") {
         N = 1;
         N_warmup = 0;
     }
