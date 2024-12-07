@@ -16,9 +16,13 @@ bool backtrack(int index, long long current_result, long long test_value, const 
         || backtrack(index + 1, current_result * numbers[index], test_value, numbers, length, include_concat);
 
     if (include_concat) {
-        char buffer[32];
-        snprintf(buffer, sizeof(buffer), "%lld%lld", current_result, numbers[index]);
-        long long concatenated_result = strtoll(buffer, NULL, 10);
+        long long mul = 1;
+        long long tmp = numbers[index];
+        while (tmp > 0) {
+            tmp /= 10;
+            mul *= 10;
+        }
+        long long concatenated_result = current_result * mul + numbers[index];
         return matches || backtrack(index + 1, concatenated_result, test_value, numbers, length, include_concat);
     }
 
