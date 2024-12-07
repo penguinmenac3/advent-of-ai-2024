@@ -1,5 +1,3 @@
-from itertools import product
-
 def calculate_total_calibration_result(input_lines, include_concat=False):
     total_calibration_result = 0
     
@@ -15,23 +13,26 @@ def calculate_total_calibration_result(input_lines, include_concat=False):
         else:
             operators = ['+', '*']
         
-        # Generate all combinations of operators for N-1 positions
-        operator_combinations = list(product(operators, repeat=len(numbers)-1))
+        # Number of possible operator combinations is len(operators)^(len(numbers)-1)
+        num_combinations = len(operators) ** (len(numbers) - 1)
         
-        for combination in operator_combinations:
+        for i in range(num_combinations):
             result = numbers[0]
-            index = 0
+            combination = []
             
-            while index < len(combination):
-                if combination[index] == '+':
-                    result += numbers[index + 1]
-                elif combination[index] == '*':
-                    result *= numbers[index + 1]
+            # Generate the current combination by determining the index of each operator
+            temp = i
+            for _ in range(len(numbers) - 1):
+                combination.append(operators[temp % len(operators)])
+                temp //= len(operators)
+            
+            for j in range(len(combination)):
+                if combination[j] == '+':
+                    result += numbers[j + 1]
+                elif combination[j] == '*':
+                    result *= numbers[j + 1]
                 else:  # '||'
-                    # Concatenate the current number with the next
-                    result = int(str(result) + str(numbers[index + 1]))
-                
-                index += 1
+                    result = int(str(result) + str(numbers[j + 1]))
             
             if result == test_value:
                 total_calibration_result += test_value
