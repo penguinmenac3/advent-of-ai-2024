@@ -1,14 +1,30 @@
 import sys
+from typing import List, Tuple, Dict, Set
 
-def parse_input():
+def parse_input() -> List[List[str]]:
+    """
+    Reads input from stdin, processes it into a grid of characters,
+    and returns the grid as a list of lists of strings.
+    """
     lines = sys.stdin.read().strip().split('\n')
     grid = [list(line.strip()) for line in lines]
     return grid
 
-def find_antinodes(grid):
-    antinode_positions = set()
-    antinode_positions_with_harmonics = set()
-    freq_to_positions = {}
+def find_antinodes(grid: List[List[str]]) -> Tuple[Set[Tuple[int, int]], Set[Tuple[int, int]]]:
+    """
+    Finds antinode positions and antinode positions with harmonics
+    from the given grid of characters.
+
+    Parameters:
+    - grid (List[List[str]]): A 2D list representing the grid of characters.
+
+    Returns:
+    - Tuple[Set[Tuple[int, int]], Set[Tuple[int, int]]]: A tuple containing two sets of positions.
+      The first set contains antinode positions, and the second set contains antinode positions with harmonics.
+    """
+    antinode_positions: Set[Tuple[int, int]] = set()
+    antinode_positions_with_harmonics: Set[Tuple[int, int]] = set()
+    freq_to_positions: Dict[str, List[Tuple[int, int]]] = {}
 
     # Populate the frequency dictionary with antenna positions
     rows, cols = len(grid), len(grid[0])
@@ -52,6 +68,9 @@ def find_antinodes(grid):
     return antinode_positions, antinode_positions_with_harmonics
 
 def main():
+    """
+    Main function to read input, find antinodes, and print the results.
+    """
     grid = parse_input()
     part1, part2 = find_antinodes(grid)
     print(len(part1))
