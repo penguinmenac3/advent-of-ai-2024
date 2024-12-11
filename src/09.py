@@ -1,6 +1,6 @@
 import sys
 
-def compact_disk(disk_map):
+def parse_disk_map(disk_map):
     # Parse the disk map into a list of lengths and types (file or free space)
     lengths = []
     is_file = True
@@ -10,7 +10,9 @@ def compact_disk(disk_map):
             length = int(char)
             lengths.append((length, is_file))
             is_file = not is_file  # Alternate between file and free space
-    
+    return lengths
+
+def compact_disk_by_block(lengths):
     # Initialize variables
     blocks = []
     file_id = 0
@@ -39,6 +41,35 @@ def compact_disk(disk_map):
     
     return blocks[:ridx]
 
+def compact_disk_by_files(lengths):
+    files = []
+    free_space = []
+    file_id = 0
+    start = 0
+    for length, file_type in lengths:
+        if file_type:
+            files.append((file_id, start, length))
+            file_id += 1
+        else:
+            free_space.append((start, length))
+        start += length
+    
+    for fid in range(len(files)-1, 0, -1):
+        fid, fstart, flen = files[fid]
+        for sid in range(len(free_space)):
+            sstart, slen = free_space[sid]
+            if fstart < sstart:
+                break
+            if flen <= slen:
+                files[fid] = (fid, sstart, flen)
+                if slen - flen > 0:
+                    free_space[sid] = (sstart + flen, slen - flen)
+                else:
+                    del free_space[sid]
+                break
+    return files
+
+
 def calculate_checksum(compact_disk):
     checksum = 0
     for i, elem in enumerate(compact_disk):
@@ -46,15 +77,27 @@ def calculate_checksum(compact_disk):
             checksum += i * elem
     return checksum
 
+def calculate_checksum_files(files):
+    checksum = 0
+    for fid, fstart, flen in files:
+        for i in range(fstart, fstart+flen):
+            checksum += i * fid
+    return checksum
+
+
 if __name__ == "__main__":
     # Read input from stdin
     disk_map = sys.stdin.read().strip()
-    
-    # Compact the disk
-    compacted_disk = compact_disk(disk_map)
 
-    # Calculate the checksum
-    checksum = calculate_checksum(compacted_disk)
+    # Parse the disk map into a list of lengths and types (file or free space)
+    lengths = parse_disk_map(disk_map)
     
-    # Print the result
+    # Compact the disk by block
+    compacted_disk = compact_disk_by_block(lengths)
+    checksum = calculate_checksum(compacted_disk)
+    print(checksum)
+
+    # Compact the disk by file
+    files = compact_disk_by_files(lengths)
+    checksum = calculate_checksum_files(files)
     print(checksum)
