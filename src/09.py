@@ -25,21 +25,22 @@ def compact_disk_by_block(lengths):
         else:
             blocks.extend(['.'] * length)
     
-    # Compact the disk by moving files to the leftmost free space
+    # Two pointers to manage the leftmost free space and the rightmost block
     lidx = 0
     ridx = len(blocks) - 1
+    
     while ridx > lidx:
         if blocks[ridx] != '.':
-            while blocks[lidx] != '.':
-                if ridx <= lidx:
-                    return blocks[:ridx]
+            while lidx < len(blocks) and blocks[lidx] != '.':
                 lidx += 1
-            blocks[lidx] = blocks[ridx]
-            blocks[ridx] = "."
+            if lidx >= ridx:
+                break
+            # Swap the rightmost block with the leftmost free space
+            blocks[lidx], blocks[ridx] = blocks[ridx], blocks[lidx]
             lidx += 1
         ridx -= 1
     
-    return blocks[:ridx]
+    return blocks[:ridx + 1]
 
 def compact_disk_by_files(lengths):
     files = []
