@@ -1,7 +1,8 @@
 import sys
 from collections import defaultdict
+from typing import List, Dict
 
-def split_number(n):
+def split_number(n: int) -> (int, int):
     """Split a number into two halves."""
     s = str(n)
     mid = len(s) // 2
@@ -9,15 +10,15 @@ def split_number(n):
     right = int(s[mid:])
     return left, right
 
-def transform_stones(stones, steps=25):
+def transform_stones(stones: List[int], steps: int = 25) -> int:
     """Transform the list of stones according to the rules using lazy evaluation and counting."""
     # Initialize the stones dictionary
-    stones_dict = defaultdict(int)
+    stones_dict: Dict[int, int] = defaultdict(int)
     for stone in stones:
         stones_dict[stone] += 1
     
     for _ in range(steps):
-        new_stones = defaultdict(int)
+        new_stones: Dict[int, int] = defaultdict(int)
         for stone, count in stones_dict.items():
             if stone == 0:
                 new_stones[1] += count
@@ -33,7 +34,7 @@ def transform_stones(stones, steps=25):
 
 def main():
     # Read input from stdin
-    stones = list(map(int, sys.stdin.read().strip().split()))
+    stones: List[int] = list(map(int, sys.stdin.read().strip().split()))
     print(transform_stones(stones, steps=25))
     print(transform_stones(stones, steps=75))
 
