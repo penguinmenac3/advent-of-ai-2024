@@ -1,0 +1,4 @@
+name: Summarize Task
+description: Summarize a task description with the details relevant to develop an algorithm
+---
+Can you summarize the task in your words very concisely. Leave out the fluffy details, but do not miss any crucial parts that are relevant for developing an algorithm that solves the task later.

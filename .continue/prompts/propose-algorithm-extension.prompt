@@ -1,0 +1,5 @@
+name: Propose Algorithm Extension
+description: Extend an algorithm to solve a task with a new part
+---
+Ok, great, now propose a simple algorithm to solve both parts of the task. Describe the algorithm in natural language to me.
+The algorithm should first produce the result to the first part and then the result to the second part.
