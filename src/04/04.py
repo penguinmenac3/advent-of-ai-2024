@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def count_word(grid, word):
     def search(word, x, y, dx, dy):
         for i in range(len(word)):

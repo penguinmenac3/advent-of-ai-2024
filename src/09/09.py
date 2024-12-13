@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 
 def parse_disk_map(disk_map):

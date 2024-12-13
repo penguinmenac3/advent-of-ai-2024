@@ -63,7 +63,7 @@ fn count_safe_reports(file_path: &str) -> io::Result<(usize, usize)> {
 }
 
 fn main() -> io::Result<()> {
-    let (safe_reports, safe_reports_with_dampener) = count_safe_reports("./data/02.txt")?;
+    let (safe_reports, safe_reports_with_dampener) = count_safe_reports("./input.txt")?;
     println!("Number of safe reports: {}", safe_reports);
     println!("Number of safe reports with dampener: {}", safe_reports_with_dampener);
     Ok(())

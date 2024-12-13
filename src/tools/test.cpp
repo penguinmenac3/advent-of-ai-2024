@@ -17,14 +17,7 @@ double run_binary(std::string& binary, const std::string& day, bool debug) {
         N = 1;
         N_warmup = 0;
     }
-    std::string infile = "./data/" + day + ".txt";
-    if (debug) {
-        infile = "./data/" + day + "_example.txt";
-    }
-    if (binary == "bin/" + day + "-py.run") {
-        binary = "python src/" + day + ".py";
-    }
-
+    std::string infile = "../" + day + "/input.txt";
     std::system((binary + " < " + infile).c_str());
     for (int i = 0; i < N_warmup; ++i) {
         std::system((binary + " < " + infile + " 1> /dev/null 2>& 1").c_str());
@@ -48,6 +41,8 @@ double measure_compilation_time(const std::string& lang, const std::string& src,
         std::system(("rustc " + src + " --target x86_64-unknown-linux-gnu -C opt-level=3 -o " + binary).c_str());
     } else if (lang == "go") {
         std::system(("go build -o " + binary + " -ldflags='-s -w' " + src).c_str());
+    } else if (lang == "py") {
+        std::system(("chmod +x "+ binary).c_str());
     }
     auto end_time = std::chrono::high_resolution_clock::now();
 
@@ -58,18 +53,24 @@ void test_day(const std::string& day, bool debug = false) {
     std::cout << "# Testing day: " << day << "\n";
 
     std::vector<std::string> languages;
-    for (const auto& entry : std::filesystem::directory_iterator("src")) {
+    for (const auto& entry : std::filesystem::directory_iterator("../" + day)) {
         if (entry.is_regular_file()) {
             std::string filename = entry.path().filename().string();
             if (filename.substr(0, 2) == day) {
-                languages.push_back(filename.substr(filename.find_last_of('.') + 1));
+                auto lang = filename.substr(filename.find_last_of('.') + 1);
+                if (lang != "run" && lang != "txt") {
+                    languages.push_back(lang);
+                }
             }
         }
     }
 
     for (const auto& lang : languages) {
-        std::string src = "src/" + day + "." + lang;
-        std::string binary = "bin/" + day + "-" + lang + ".run";
+        std::string src = "../" + day + "/" + day + "." + lang;
+        std::string binary = "../" + day + "/" + day + "-" + lang + ".run";
+        if (lang == "py") {
+            binary = src;
+        }
 
         if (std::filesystem::exists(src)) {
             std::cout << "\nTesting: " << src << "\n";
