@@ -13,9 +13,15 @@ def run_binary(binary, day, solution, debug, N = 10, N_warmup=5):
 
     start_time = time.perf_counter_ns()
     try:
-        result = subprocess.run(f"{binary} < {infile}", check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True).stdout
+        result = subprocess.run(f"{binary} < {infile}", check=True, text=True, shell=True,
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                timeout=30).stdout
     except subprocess.CalledProcessError as e:
         result = e.stdout
+    except subprocess.TimeoutExpired as e:
+        result = e.stdout
+        if result is None:
+            result = "Timeout"
     end_time = time.perf_counter_ns()
     result = result.strip()
     if solution is None:
