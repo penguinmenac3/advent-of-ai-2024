@@ -12,6 +12,7 @@ def run_binary(binary, year, day, solution, debug, N = 10, N_warmup=5):
         infile = f"../{year}/{day:02d}/input_example.txt"
 
     start_time = time.perf_counter_ns()
+    result = None
     try:
         result = subprocess.run(f"{binary} < {infile}", check=True, text=True, shell=True,
                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -22,6 +23,9 @@ def run_binary(binary, year, day, solution, debug, N = 10, N_warmup=5):
         result = e.stdout
         if result is None:
             result = "Timeout"
+    except KeyboardInterrupt:
+        if result is None:
+            result = "Canceled by User"
     end_time = time.perf_counter_ns()
     result = result.strip()
     if solution is None:
@@ -62,6 +66,12 @@ def measure_compilation_time(lang, src, binary):
     elif lang == "rs":
         os.system(f"go build -o {binary} -ldflags='-s -w {src}")
     elif lang == "py":
+        with open(f"{src}", "r") as f:
+            lines = f.read().split("\n")
+        if lines[0].strip() != "#!/usr/bin/env python3":
+            lines = ["#!/usr/bin/env python3"] + lines
+            with open(f"{src}", "w") as f:
+                f.write("\n".join(lines))
         os.system(f"chmod +x {binary}")
     end_time = time.perf_counter_ns()
     return (end_time - start_time) / 1e6
