@@ -1,4 +1,4 @@
-src/tools/config.py
+tools/config.py
 __pycache__
 *.run
 *.txt

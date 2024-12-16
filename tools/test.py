@@ -5,11 +5,11 @@ import time
 import subprocess
 
 
-def run_binary(binary, day, solution, debug, N = 10, N_warmup=5):
-    infile = f"../{day:02d}/input.txt"
+def run_binary(binary, year, day, solution, debug, N = 10, N_warmup=5):
+    infile = f"../{year}/{day:02d}/input.txt"
     status = "FAILED"
     if debug:
-        infile = f"../{day:02d}/input_example.txt"
+        infile = f"../{year}/{day:02d}/input_example.txt"
 
     start_time = time.perf_counter_ns()
     try:
@@ -67,8 +67,8 @@ def measure_compilation_time(lang, src, binary):
     return (end_time - start_time) / 1e6
 
 
-def load_solution(day):
-    fname = f"../{day:02d}/solution.txt"
+def load_solution(year, day):
+    fname = f"../{year}/{day:02d}/solution.txt"
     if not os.path.exists(fname):
         return None
     
@@ -80,28 +80,29 @@ def load_solution(day):
     return solution
 
 
-def test_day(day, debug=False):
+def test_day(year, day, debug=False):
     measure_compilation_time("cpp", "./test.cpp", "./test.run")
-    solution = load_solution(day)
+    solution = load_solution(year, day)
     print(f"# Testing day: {day}")
-    languages = [f.split(".")[-1] for f in os.listdir(f"../{day:02d}") if f.startswith(f"{day:02d}") and not f.endswith(".run")]
+    languages = [f.split(".")[-1] for f in os.listdir(f"../{year}/{day:02d}") if f.startswith(f"{day:02d}") and not f.endswith(".run")]
     for lang in languages:
-        src = f"../{day:02d}/{day:02d}.{lang}"
-        binary = f"../{day:02d}/{day:02d}-{lang}.run"
+        src = f"../{year}/{day:02d}/{day:02d}.{lang}"
+        binary = f"../{year}/{day:02d}/{day:02d}-{lang}.run"
         if lang == "py":
             binary = src
         if os.path.exists(src):
             print(f"\nTesting: {src}")
             compilation_time = measure_compilation_time(lang, src, binary)
-            binary_execution_time, status = run_binary(binary, day, solution, debug=debug)
+            binary_execution_time, status = run_binary(binary, year, day, solution, debug=debug)
             print(f"{status} - Total: {(binary_execution_time + compilation_time):.2f}ms, Compile: {compilation_time:.2f}ms, Execution: {binary_execution_time:.2f}ms")
 
 
 if __name__ == "__main__":
+    year = 2024
     if len(sys.argv) == 2:
-        test_day(int(sys.argv[1]))
+        test_day(year, int(sys.argv[1]))
     elif len(sys.argv) == 3 and sys.argv[2] == "debug":
-        test_day(int(sys.argv[1]), debug=True)
+        test_day(year, int(sys.argv[1]), debug=True)
     else:
         print("ERROR: Specify no argument to run all days or a single number for a day.")
         print("    Examples:")
